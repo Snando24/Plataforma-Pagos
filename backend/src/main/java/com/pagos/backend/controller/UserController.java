@@ -3,6 +3,7 @@ package com.pagos.backend.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.pagos.backend.dto.UserDto;
 import com.pagos.backend.model.User;
 import com.pagos.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,24 +24,24 @@ public class UserController {
 
     // Obtener todos los usuarios
     @GetMapping("/")
-    public List<User> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public List<UserDto> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers();
         return users;
     }
 
     // Obtener usuario por ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        Optional<UserDto> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Crear un nuevo usuario
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
         try {
-            User savedUser = userService.createUser(user);
+            UserDto savedUser = userService.createUser(user);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -49,11 +50,11 @@ public class UserController {
 
     // Actualizar un usuario existente
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDetails) {
         return userService.getUserById(id).map(user -> {
             user.setName(userDetails.getName());  // Ajusta los atributos según la entidad User
             user.setEmail(userDetails.getEmail());
-            User updatedUser = userService.createUser(user);
+            UserDto updatedUser = userService.createUser(user);
             return ResponseEntity.ok(updatedUser);
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
