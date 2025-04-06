@@ -1,0 +1,19 @@
+# IMAGEN MODELO
+FROM eclipse-temurin:17.0.14_7-jdk
+#INFORMAR EL PUERTO DE EJECUCION
+EXPOSE 8080
+# DEFINIR DIRECTORIO RAIZ DE CONTENEDOR
+WORKDIR /root
+#COPIAR Y PEGAR ARCHIVOS EN CONTENEDOR
+COPY ./pom.xml /root
+COPY ./.mvn /root/.mvn
+COPY ./mvnw.cmd /root
+COPY ./mvnw /root
+#DESCARGAR DEPENDENCIAS
+RUN ./mvnw dependency:go-offline
+#COPIAR EL CODIGO FUENTE EN EL CONTENEDOR
+COPY ./src /root/src
+#CONTRUIR NUESTRA APP
+RUN ./mvnw clean install -DskipTests
+#LEVANTAR NUESTRA APLICACION CUANDO EL CONTENEDOR INICIE
+ENTRYPOINT ["java","-jar","/root/target/backend-0.0.1-SNAPSHOT.jar"]
